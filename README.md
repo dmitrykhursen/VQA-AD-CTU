@@ -25,7 +25,7 @@
 
 Browse 25 randomly sampled scenes with model comparison side-by-side:
 
-**[Open interactive demo gallery](https://dkhursen.github.io/VQA-AD-CTU/)**
+**[Open interactive demo gallery](https://dmitrykhursen.github.io/VQA-AD-CTU/)**
 
 Each scene shows the stitched 6-camera view and all QA pairs with ground-truth vs. model predictions, category labels (perception / prediction / planning / behaviour), and coordinate token highlighting.
 
@@ -375,7 +375,7 @@ python inference/scene_demo.py \
     --output docs/my_scene.html
 ```
 
-Regenerate the full 25-scene gallery (used for GitHub Pages at `dkhursen.github.io/VQA-AD-CTU`):
+Regenerate the full 25-scene gallery (used for GitHub Pages at `dmitrykhursen.github.io/VQA-AD-CTU`):
 
 ```bash
 python inference/make_demo_index.py
