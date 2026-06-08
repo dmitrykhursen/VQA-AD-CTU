@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment
+.env
+.venv/
+venv/
+vqa-ad-ctu-env/
+
+# OS
+.DS_Store
+
+# Model weights & checkpoints
+*.pt
+*.bin
+*.safetensors
+*.ckpt
+
+# Data (raw and processed — download separately)
+data/raw/
+data/processed/
+
+# Experiment tracking
+wandb/
+
+# Logs
+*.log
+*.err
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large pseudo-label files — hosted on HuggingFace Datasets instead
+data/drivelm_aug_pseudo_labels/drivelm_pseudo_qas_100k.json
+data/drivelm_aug_pseudo_labels/train_aug30pct.json
+data/drivelm_aug_pseudo_labels/train_aug50pct.json
+data/drivelm_aug_pseudo_labels/train_aug100pct.json
+# train_aug10pct.json kept as a sample (~52 MB — below GitHub 100 MB hard limit)
+
+# Generated pipeline artefacts — reproducible from source data
+data/drivelm_custom_split/intermediate/
+data/drivelm_custom_split/*_stitched.jsonl
+data/drivelm_custom_split/internvl_meta_*.json
+data/drivelm_aug_pseudo_labels/*_stitched.jsonl
+data/drivelm_aug_pseudo_labels/internvl_meta_*.json
+
+*.out
+
+# Checkpoint weights — download from HuggingFace (huggingface.co/dkhursen)
+ckpts/*
+!ckpts/README.md
+
+logs*/
+
+.c*

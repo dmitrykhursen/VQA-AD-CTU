@@ -1,0 +1,362 @@
+prompts:
+  context: |
+    You are an AI assistant analyzing a driving scene captured from the cameras and sensors of an autonomous vehicle.
+    Your task is to generate exactly ONE Question/Answer (QA) pair based on a provided question template and a specified objects.
+
+    ### SCENE CONTEXT
+    - Image Size: 2448 x 2048 (width x height) px
+
+  position: |
+    Whenever the question template contains <position>, replace it with **exactly one** of the following phrases, that describes the position of the referenced object relative to the ego vehicle:
+      - "left of the ego vehicle"
+      - "right of the ego vehicle"
+      - "front of the ego vehicle"
+
+  important_objects: |
+    Do not include all objects in your answer. Focus only on the most important objects that influence the driving decision of the ego vehicle.
+
+  obj: |
+    FOLLOW ALL FORMATTING RULES EXACTLY. DO NOT IGNORE THEM.
+
+    **CRITICAL RULE — REPLACE <obj> TOKENS EXACTLY**
+
+    Every time the question template contains <obj>, replace it with:
+      <object_id,camera_name,cx,cy>
+
+    Where:
+    - object_id = EXACT provided object name (example: car_4)
+    - camera_name = The exact camera name where the object was detected
+    - cx, cy = the object's middle point coordinates
+    - must use angle brackets exactly like this: < ... >
+    - NEVER change the order or spacing
+    - Each <obj> must use a DIFFERENT object
+
+    **OBJECT SELECTION RULES**
+    - Use ONLY objects from the provided list.
+    - NEVER reuse the same object for multiple <obj> tokens.
+    - Choose objects that make sense for the question.
+
+    Apart from replacing <obj>, do NOT modify the question template in any way.
+    **Never add more objects than the template requires**
+    When referencing the object in the short_answer, include this tag
+
+  no_obj: |
+    Use the question exactly as provided without any modifications.  
+
+  coordinate_system: |
+    ### COORDINATE SYSTEM & SPATIAL RULES
+    2D Camera Coordinates in px:
+      - (0,0) = top-left
+      - x increases -> right 
+      - y increases -> down 
+      - smaller cy = farther away 
+      - larger cy = closer to ego vehicle
+
+  answer_rules: |
+    ### ANSWER RULES
+    - Grounding: Your answer MUST be supported by the provided object list.
+    - Prioritization: Focus mainly on vehicles. Secondly focus on pedestrians. Then objects close to the ego vehicle and objects in the path of the ego vehicle. Use objects that make sense for the question.
+    - Formatting: NEVER use internal IDs (e.g., "car_0") in the answer outside of tags. Use descriptive phrases instead or the whole tag.
+    - Output Format: You must output EXACTLY the following JSON structure and nothing else.
+    {
+        "question": "...", // MUST contain correctly formatted object tags
+        "reasoning": "...", // MUST include consice spatial analysis
+        "short_answer": "..." // MUST be brief (yes/no or 1-2 sentences). USE ONLY QUALITATIVE SPATIAL TERMS RELATIVE TO THE EGO VEHICLE. NO NUMERIC DISTANCES OR UNITS
+    }
+
+  detected_objects_tracks_custom: |
+    ### DETECTED OBJECTS DATA
+    Use the exact question template provided without modifications.
+    pos_history is taken from the previous frames (..., t-2, t-1) and the current frame (t-0)
+    Data Schema:
+    {"id":"Camera_ObjectType","bbox":[x, y, width, height in px],"center":[cx, cy in px],"pos_history":[..., [x,y,z at t-2],[x,y,z at t-1],[x,y,z at t-0] in meters]}
+    *Note: If an object is new at t=0, pos_history will only contain one array: [x,y,z at t-0]*
+
+  detected_objects_tracks_nuscenes: |
+    ### DETECTED OBJECTS DATA
+    Use the exact question template provided without modifications.
+    pos_history is taken from the previous frames (..., t-2, t-1) and the current frame (t-0)
+    Data Schema: 
+    {"id":"Camera_ObjectType","bbox":[x, y, width, height in px],"center":[cx, cy in px],"pos_history":[..., [x,y,z,d at t-2],[x,y,z,d at t-1],[x,y,z,d at t-0] in meters]}
+    *Note: If an object is new at t=0, pos_history will only contain one array: [x,y,z,d at t-0]*
+
+  detected_objects: |
+    ### DETECTED OBJECTS DATA
+    Use the exact question template provided without modifications.
+    Data Schema: 
+    {"id":"Camera_ObjectType","bbox":[cx, cy, width, height in px],"center":[cx, cy in px]}
+
+  custom_tracks_coords_m: |
+    3D Ego Vehicle Coordinates [x, y, z in meters]:
+    - x < 0 left of ego vehicle, x > 0 right of ego vehicle
+    - y < 0 below sensor, y > 0 above sensor (sensor mounted on the roof of the vehicle)
+    - z > 0 forward distance only (measured parallel to the ground from the sensor)
+    the position history is captured at a fixed temporal cadence
+
+  nuscenes_tracks_coords_m: |
+    3D Ego Vehicle Coordinates (nuScenes format: [x, y, z, d in meters]):
+    - x > 0: forward (in front of ego), x < 0: backward
+    - y > 0: left of ego, y < 0: right
+    - z > 0: up, z < 0: down
+    - d: Euclidean distance from ego vehicle
+    the position history is captured roughly every 500 ms
+
+  nuscenes_tracks_coords_global_m: |
+    3D Global Map Coordinates (nuScenes format: [x, y, z, d in meters]):
+    - x: Fixed global map X-axis (points East), NOT relative to the car.
+    - y: Fixed global map Y-axis (points North), NOT relative to the car.
+    - z: Absolute elevation/height in the global map.
+    - d: Euclidean distance from ego vehicle to the object.
+    the position history is captured roughly every 500 ms
+
+    Crucial Instruction: 
+    To determine if an object is in front, behind, or to the side of the car, you must use the Ego Vehicle's Global Position and Heading to determine which way the windshield is facing
+
+  # <dataset_name>_dataset_car_in_view: (optional, camera-specific)
+  # Add a key matching your dataset if the ego vehicle is visible in the camera image.
+  # Example format:
+  #   custom_dataset_car_in_view: |
+  #     Ego vehicle:
+  #     - bounding box [x, y, w, h], midpoint [cx, cy]
+  #     - <describe where/how ego appears in the image>
+
+answer_formatting:
+  no_additional_info: |
+    Do not provide any additional information in the short_answer
+  yes_no_questions: |
+    Only answer "Yes." or "No."
+
+  multiple_choice_questions: |
+    Only answer with the provided letter corresponding to the correct option without interpunction. 
+
+  multiple_parts: |
+    Keep all the provided question parts in the question. Answer all parts in the reasoning and short_answer. Do not drop any part of the question!
+
+  init_q_main: |
+    The short_answer must consist of exactly two sentences. Fill up this template. ONLY replace the <tags>.
+  init_q_num_obj_3: |
+    There is a <description of the object> to the <relative position to the ego> of the ego vehicle, a <description of the object> to the <relative position to the ego> of the ego vehicle, and a <description of the object> to the <relative position to the ego> of the ego vehicle. The IDs of these objects are <obj>, <obj>, and <obj>.
+  init_q_num_obj_4: |
+    There is a <description of the object> to the <relative position to the ego> of the ego vehicle, a <description of the object> to the <relative position to the ego> of the ego vehicle, a <description of the object> to the <relative position to the ego> of the ego vehicle, and a <description of the object> to the <relative position to the ego> of the ego vehicle. The IDs of these objects are <obj>, <obj>, <obj>, and <obj>.
+  init_q_num_obj_5: |
+    There is a <description of the object> to the <relative position to the ego> of the ego vehicle, a <description of the object> to the <relative position to the ego> of the ego vehicle, a <description of the object> to the <relative position to the ego> of the ego vehicle, a <description of the object> to the <relative position to the ego> of the ego vehicle, and a <description of the object> to the <relative position to the ego> of the ego vehicle. The IDs of these objects are <obj>, <obj>, <obj>, <obj>, and <obj>.
+  init_q_num_obj_6: |
+    There is a <description of the object> to the <relative position to the ego> of the ego vehicle, a <description of the object> to the <relative position to the ego> of the ego vehicle, a <description of the object> to the <relative position to the ego> of the ego vehicle, a <description of the object> to the <relative position to the ego> of the ego vehicle, a <description of the object> to the <relative position to the ego> of the ego vehicle, and a <description of the object> to the <relative position to the ego> of the ego vehicle. The IDs of these objects are <obj>, <obj>, <obj>, <obj>, <obj>, and <obj>.
+
+  actions_probability: |
+    The answer must contain all three parts. Start with "The action is " and the most likely action. Then add few words of reasoning and provide the probability ("high" or "low") for that action
+
+  collison: |
+    <comma separated list of dangerous actions> 
+
+  actions_for_ego: |
+    Answer with comma separated actions. 
+
+  notice_three_obj: |
+    The short answer must contain six sentences in this structure: "Firstly, notice <obj>. The object is <action>, so the ego should <action>. Secondly, notice <obj>. The object is <action>, so the ego should <action>. Thirdly, notice <obj>. The object is <action>, so the ego should <action>." Replace the <obj> based on the previous instructions
+
+  most_possible_action: |
+    Only answer the action.
+
+  priority_of_objects: |
+    Answer a comma separated list of the objects
+
+  describe_scene: |
+    There is <amount> moving <object> <position_to_ego_car>, <amount> moving <object> <position_to_ego_car>, <amount> parked <object> <position_to_ego_car>, <amount> parked <object> <position_to_ego_car>, <amount> moving <object> <position_to_ego_car>, <amount> moving <object> <position_to_ego_car>, <amount> <object> without a rider <position_to_ego_car>, <amount> <object> without a rider <position_to_ego_car>, <amount> standing <object> <position_to_ego_car>, <amount> standing <object> <position_to_ego_car>, <amount> standing <object> <position_to_ego_car>, <amount> moving <object> <position_to_ego_car>, <amount> moving <object> <position_to_ego_car>, and <amount> moving <object> <position_to_ego_car>.
+
+  future_state: |
+    future state of <obj> is to <action>
+
+  object_meaning: |
+    meaning of <obj> is <meaning>
+
+  most_relevant_object: |
+    <obj>
+
+  relevant_object_except_ego: |
+    <obj>
+
+  objects_to_position: |
+    There is/are <comma separated list of <amount> <obj>> <position_to_ego_car>.
+
+  likely_to_consider: |
+    <obj>.
+
+  occlusion_and_danger: |
+    <short format or detailed sentences containing , <yes/no occlusion status>, and <dangerous_action or none>>
+
+  traffic_elements_bounding_box: |
+    There are <amount> traffic elements in the front view. The information of these traffic elements is <traffic_elements>.
+
+  safe_actions_ego: |
+    <comma separated list of safe actions>
+
+fewshot:
+  tracks_m: |
+    EXAMPLES:
+      - A position of [-1.5, 0.0, 10.0] means the object was 1.5 meters to the left of the ego vehicle and 10.0 meters ahead.
+      - [1.83, -2.48, 69.18] at t-165 ms, [1.81, -2.51, 69.18] at t-110 ms, [1.35, -2.37, 69.04] at t-55 ms, [1.35, -2.26, 69.04] at t-0 ms. means the object was 1.83 meters to the right, 2.48 meters below, and 69.18 meters ahead 165 milliseconds ago; 1.81 meters to the right, 2.51 meters below, and 69.18 meters ahead 110 milliseconds ago; 1.35 meters to the right, 2.37 meters below, and 69.04 meters ahead 55 milliseconds ago; and 1.35 meters to the right, 2.26 meters below, and 69.04 meters ahead now.
+    EXAMPLES:
+      - relative position at t-0 ms: [-3.94, -0.48, 61.56]. No prior frames available.
+      This means the object is 3.94 meters to the left, 0.48 meters below, and 61.56 meters ahead of the ego vehicle in the current frame, with no previous data.
+
+  obj: |
+    Correct Example:
+    Template:;
+      Are <obj> and <obj> close to each other?
+    Correct Output:
+      Are <pedestrian_0, CAM_FRONT, 511.8, 981.5> and <car_3, CAM_BACK, 1085.0, 929.0> close to each other?
+    WRONG EXAMPLES — NEVER DO THESE
+      "car_4"
+      "<car_4>"
+      "<car_4,1031.5,938.5>"
+      "<car_4 CAM_FRONT 1031 938>"
+      Leaving <obj> UNCHANGED
+      Using the same object twice for different <obj> tokens
+      Removing parentheses or commas
+    If you output a question like:
+        "What actions could cause a collision with <obj>?"
+    YOU HAVE FAILED THE FORMAT.
+
+  position: |
+    EXAMPLES:
+    Template:
+        Is the pedestrian on the <position>?
+
+    Correct Output:
+        Is the pedestrian on the "left side of the ego vehicle"?
+
+    Template:
+        Is the car approaching from the <position>?
+
+    Correct Output:
+        Is the car approaching from the "ahead of the ego vehicle"?
+
+    WRONG EXAMPLES — NEVER DO THESE:
+        <position>
+        left/right/ahead
+        left/right of car
+        Any phrase not exactly matching the three allowed phrases
+
+misc:
+  qa_generation_old_format: |
+    Instructions:
+
+    1. **Question Template**:
+    - You will be provided with a **question template**.
+      Always use that **exact** question except the special tokens and generate the appropriate answer based on the provided scene objects and the scene description.
+
+    - The question may contain one or more <obj> tokens:
+      - **If the question contains no <obj> tokens**: 
+        Use the question as-is and answer based on the overall scene, object list, and scene description.
+
+      - **If the question contains <obj> token(s)**: 
+        - **Replace each <obj> with a TAG in the following format**: <object_id, CAM_FRONT, cx, cy> 
+        where the object_id is the id of selected object (i.e. car_42), CAM_FRONT is always the same (as the data are only from the front camera)
+        and cx, cy are the middle point coordinates of the relevant object.
+        -**Always use the provided objects. Don't hallucinate new objects nor leave the token unchanged in the question.**
+        - Closely follow the format. Do not use only the object type or only the coordinates.
+
+    - **If the question contains multiple <obj> tokens**: 
+      - Each should be replaced with a **different object**.
+      - Select objects that create an interesting and answerable comparison/relationship
+      - Choose objects with clear spatial relationships or contrasts
+      - **Always prefer vehicles** (such as cars), but also include other object types when relevant, do not repeat yourself
+      - Prefer objects that are clearly visible (larger bounding boxes)
+      - Do not always select the closest objects; consider overall scene context
+      - Ensure the selected objects make logical sense for the question being asked
+
+    2. **Answering Rules**:
+    - Include only questions with definite answers:
+      - The content is clearly visible in the scene, or
+      - The content is clearly absent.
+
+    - Only provide answers that are definitely supported by:
+      - the object list
+      - the image description
+      - visible facts inferred from bounding box positions
+      - **give more weight to the object list, as the description is only there to paint the overall scene and omits important details**
+
+    - Do NOT assume any details not explicitly shown.
+    - Never hallucinate colors, brands, text, or features unless provided.
+
+    - When referring to objects in the answer:
+      - Do NOT use internal IDs.
+      - Describe objects using their position or appearance, e.g.
+        "a pedestrian on the left side of the scene",
+        "a car directly ahead", etc.
+
+    - For complex questions, provide detailed reasoning, examples, or step-by-step explanations.
+
+    3. **Direction Definition**:
+    - The ego vehicle's **moving direction is straight forward**, aligned with
+      the forward axis of the front camera.
+
+    - Coordinates use standard image convention:
+      - (0,0) = top-left
+      - x increases to the right
+      - y increases downward
+
+    - Therefore:
+      - smaller cy → object is farther ahead
+      - larger cy → object is closer to the vehicle
+      - smaller cx → object is to the left
+      - larger cx → object is to the right
+
+    - Thresholds roughly based on image width:
+      - Left side: cx < 979
+      - Right side: cx > 1468
+      - Ahead: 979 ≤ cx ≤ 1468
+
+    - Do not solely rely on these thresholds, also consider the vertical distance (cy) to determine if the object is truly ahead.
+    The further away the object, the narrower the "ahead" zone becomes.  
+
+    - Note that the ego vehicle is always at the bottom left of the image and is partially visible, as the camera is mounted above the right front seat
+      - The rough bounding box of the ego vehicle is [0, 1485, 1600, 600], middle point [800.0, 1785.0]
+
+
+    4. Output Format
+    Output a JSON array containing exactly one object with the following structure:
+    {
+      "question": "...",
+      "reasoning": "...",
+      "short_answer": "..."
+    }
+
+    Where:
+    - "question": The complete question with the <obj> token replaced by the TAG format
+    - "reasoning": A detailed explanation of how you arrived at the answer, including:
+      - Analysis of the object's position (cx, cy coordinates)
+      - Spatial relationship to the ego vehicle's forward path
+      - Any relevant context from the scene description
+      - Step-by-step logic that supports your conclusion
+    - "short_answer": A concise answer (typically 1-2 sentences or only yes/no) that directly answers the question without the detailed reasoning
+
+    5. **Scene Objects**:
+    - Example format for object list:  
+    pedestrian_0 with bbox [x1, y1, width, height], middle point [x, y]
+    car_0 with bbox [x1, y1, width, height], middle point [x, y]
+    traffic_light_0 with bbox [x1, y1, width, height], middle point [x, y]
+    traffic_sign_0 with bbox [x1, y1, width, height], middle point [x, y]
+
+  tracks_px: |
+    You are also provided consecutive middle point positions from previous frames.
+    Each position is formatted the same as the other mid points.
+
+    The positions are time-ordered from oldest to newest with 55 milliseconds between frames.
+    EXAMPLES:
+    - A position of [1200, 950] means the object was at pixel coordinates (1200, 950) in the previous frame.
+    - [1249, 971] at t-165 ms, [1249, 970] at t-110 ms, [1248, 972] at t-55 ms, [1248, 975] at t-0 ms. means the objects middle point was at pixel coordinates (1249, 971) 165 milliseconds ago, (1249, 970) 110 milliseconds ago, (1248, 972) 55 milliseconds ago and (1248, 975) now.
+
+    Special Case: New Objects
+    If an object is detected for the first time in the current frame (t=0 ms), it will have no historical measurements. Its entry will use this exact format:
+    - midpoint at t-0 ms: [cx, cy]. No prior frames available.
+    EXAMPLES:
+    - midpoint at t-0 ms: [1248, 975]. No prior frames available.
+    This means the object is at pixel coordinates (1248, 975) in the current frame, with no previous data. This midpoint corresponds to the bounding box and middle point provided in the object list within rounding error.
+
+    RULES FOR QA GENERATION:
+    - Never calculate velocity/direction for these objects (insufficient data).
+    - Prioritize objects with history for motion-based questions unless the query specifically references new objects.
+
+ 

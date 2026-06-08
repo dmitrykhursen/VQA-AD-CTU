@@ -1,0 +1,15 @@
+{
+  "global_metrics": {
+    "eval_drivelm_final_score": 0.634,
+    "eval_accuracy": 0.743,
+    "eval_chatgpt": 73.95,
+    "eval_lang_val/Bleu_1": 0.827,
+    "eval_lang_val/Bleu_2": 0.765,
+    "eval_lang_val/Bleu_3": 0.711,
+    "eval_lang_val/Bleu_4": 0.659,
+    "eval_lang_val/ROUGE_L": 0.775,
+    "eval_lang_val/CIDEr": 0.707,
+    "eval_match": 41.9,
+    "eval_pure_coordinate_match": 0.112
+  }
+}

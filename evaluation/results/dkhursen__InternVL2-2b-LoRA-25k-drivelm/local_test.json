@@ -1,0 +1,392 @@
+{
+  "global_metrics": {
+    "step": 403,
+    "eval_drivelm_final_score": 0.5601401428051811,
+    "eval_accuracy": 0.8258381030253475,
+    "eval_chatgpt": 58.930817610062896,
+    "eval_match": 33.769992070731064,
+    "eval_pure_coordinate_match": 0.015043546877804171,
+    "eval_lang_score": 0.4585463380919892,
+    "eval_lang_val/Bleu_1": 0.7322424578595195,
+    "eval_lang_val/Bleu_2": 0.6679477234483858,
+    "eval_lang_val/Bleu_3": 0.6064889576888205,
+    "eval_lang_val/Bleu_4": 0.5467543382641108,
+    "eval_lang_val/ROUGE_L": 0.7142388892072711,
+    "eval_lang_val/CIDEr": 0.23041755753487383
+  },
+  "global_answer_length": {
+    "avg": 19.14,
+    "min": 1,
+    "max": 105,
+    "median": 4.0,
+    "count": 3340
+  },
+  "per_template": {
+    "In this scenario, what are safe actions to take for the ego vehicle?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 45.74764150943396,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 0.0,
+        "string_accuracy": 0.02122641509433962
+      },
+      "answer_length": {
+        "avg": 9.06,
+        "min": 9,
+        "max": 10,
+        "median": 9.0,
+        "count": 424
+      }
+    },
+    "Predict the behavior of the ego vehicle.": {
+      "metrics": {
+        "accuracy": 0.5589622641509434,
+        "chatgpt": 0.0,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 0.0,
+        "string_accuracy": 0.5589622641509434
+      },
+      "answer_length": {
+        "avg": 1.0,
+        "min": 1,
+        "max": 1,
+        "median": 1.0,
+        "count": 424
+      }
+    },
+    "Is <obj> a traffic sign or a road barrier?": {
+      "metrics": {
+        "accuracy": 0.9764150943396226,
+        "chatgpt": 0.0,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 0.0,
+        "string_accuracy": 0.9764150943396226
+      },
+      "answer_length": {
+        "avg": 1.0,
+        "min": 1,
+        "max": 1,
+        "median": 1.0,
+        "count": 424
+      }
+    },
+    "What actions could the ego vehicle take based on <obj>? Why take this action and what's the probability?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 79.66509433962264,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 0.0,
+        "string_accuracy": 0.14858490566037735
+      },
+      "answer_length": {
+        "avg": 24.0,
+        "min": 23,
+        "max": 24,
+        "median": 24.0,
+        "count": 424
+      }
+    },
+    "What actions taken by the ego vehicle can lead to a collision with <obj>?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 50.6438679245283,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 0.0,
+        "string_accuracy": 0.24056603773584906
+      },
+      "answer_length": {
+        "avg": 3.33,
+        "min": 2,
+        "max": 8,
+        "median": 3.0,
+        "count": 424
+      }
+    },
+    "What are the important objects in the current scene? Those objects will be considered for the future reasoning and driving decision.": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 0.0,
+        "language": {
+          "val/Bleu_1": 0.7341085757271585,
+          "val/Bleu_2": 0.6704404253939279,
+          "val/Bleu_3": 0.6092513600879939,
+          "val/Bleu_4": 0.549542135282021,
+          "val/ROUGE_L": 0.7184326830016334,
+          "val/CIDEr": 0.08431051960715116
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 0.0,
+        "string_accuracy": 0.0
+      },
+      "answer_length": {
+        "avg": 62.45,
+        "min": 43,
+        "max": 105,
+        "median": 65,
+        "count": 393
+      }
+    },
+    "What is the moving status of object <obj>?": {
+      "metrics": {
+        "accuracy": 0.9573333333333334,
+        "chatgpt": 0.0,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 0.0,
+        "string_accuracy": 0.9573333333333334
+      },
+      "answer_length": {
+        "avg": 1.0,
+        "min": 1,
+        "max": 1,
+        "median": 1,
+        "count": 375
+      }
+    },
+    "What object should the ego vehicle notice first when the ego vehicle is getting to the next possible location? What is the state of the object that is first noticed by the ego vehicle and what action should the ego vehicle take? What object should the ego vehicle notice second when the ego vehicle is getting to the next possible location? What is the state of the object perceived by the ego vehicle as second and what action should the ego vehicle take? What object should the ego vehicle notice third? What is the state of the object perceived by the ego vehicle as third and what action should the ego vehicle take?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 0.0,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.6647673206710984,
+        "match": 33.614434942386836,
+        "string_accuracy": 0.0
+      },
+      "answer_length": {
+        "avg": 62.79,
+        "min": 49,
+        "max": 63,
+        "median": 63,
+        "count": 351
+      }
+    },
+    "In this scenario, what object is most likely to consider <obj>?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 0.0,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 33.5,
+        "string_accuracy": 0.0
+      },
+      "answer_length": {
+        "avg": 1.0,
+        "min": 1,
+        "max": 1,
+        "median": 1,
+        "count": 31
+      }
+    },
+    "What are objects <position_to_ego_car>?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 0.0,
+        "language": {
+          "val/Bleu_1": 0.6986607142841548,
+          "val/Bleu_2": 0.5973557341867216,
+          "val/Bleu_3": 0.5064811311287982,
+          "val/Bleu_4": 0.432253567107913,
+          "val/ROUGE_L": 0.6966274369841304,
+          "val/CIDEr": 2.115042972352733
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 0.0,
+        "string_accuracy": 0.0
+      },
+      "answer_length": {
+        "avg": 15.45,
+        "min": 11,
+        "max": 19,
+        "median": 16,
+        "count": 29
+      }
+    },
+    "Which object is most likely to be occluded by <obj>? Would this object affect the ego vehicle? Based on this object, what action of the ego vehicle is dangerous?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 0.0,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 4.166666604166667,
+        "match": 31.333333302083332,
+        "string_accuracy": 0.0
+      },
+      "answer_length": {
+        "avg": 3.0,
+        "min": 3,
+        "max": 3,
+        "median": 3.0,
+        "count": 24
+      }
+    },
+    "Identify all the traffic elements in the front view, categorize them, determine their status, and predict the bounding box around each one. The output should be a list formatted as (c, s, x1, y1, x2, y2), where c represents the category, s denotes the status, and x1, y1, x2, y2 are the offsets of the top-left and bottom-right corners of the box relative to the center point.": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 0.0,
+        "language": {
+          "val/Bleu_1": 0.07232743916588044,
+          "val/Bleu_2": 0.03382450333937516,
+          "val/Bleu_3": 0.023095453702752285,
+          "val/Bleu_4": 0.01613342960434407,
+          "val/ROUGE_L": 0.14552446585059836,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 0.0,
+        "string_accuracy": 0.0
+      },
+      "answer_length": {
+        "avg": 46.5,
+        "min": 36,
+        "max": 57,
+        "median": 46.5,
+        "count": 2
+      }
+    },
+    "Except for the ego vehicle, what object would consider <obj> to be most relevant to its decision?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 0.0,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 26.75,
+        "string_accuracy": 0.0
+      },
+      "answer_length": {
+        "avg": 1.0,
+        "min": 1,
+        "max": 1,
+        "median": 1.0,
+        "count": 4
+      }
+    },
+    "What object would consider <obj> to be most relevant to its decision?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 0.0,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 32.785714285714285,
+        "string_accuracy": 0.0
+      },
+      "answer_length": {
+        "avg": 1.0,
+        "min": 1,
+        "max": 1,
+        "median": 1,
+        "count": 7
+      }
+    },
+    "What is the future state of <obj>?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 0.0,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 99.99999850000002,
+        "match": 81.66666591666667,
+        "string_accuracy": 0.0
+      },
+      "answer_length": {
+        "avg": 9.0,
+        "min": 9,
+        "max": 9,
+        "median": 9,
+        "count": 3
+      }
+    },
+    "What does <obj> mean?": {
+      "metrics": null,
+      "answer_length": {
+        "avg": 0,
+        "min": 0,
+        "max": 0,
+        "median": 0,
+        "count": 0
+      }
+    },
+    "What kind of traffic sign is <obj>?": {
+      "metrics": {
+        "accuracy": 0.0,
+        "chatgpt": 0.0,
+        "language": {
+          "val/BLEU": 0.0,
+          "val/ROUGE_L": 0.0,
+          "val/CIDEr": 0.0
+        },
+        "pure_coordinates_match": 0.0,
+        "match": 0.0,
+        "string_accuracy": 0.0
+      },
+      "answer_length": {
+        "avg": 3.0,
+        "min": 3,
+        "max": 3,
+        "median": 3,
+        "count": 1
+      }
+    },
+    "Please describe the current scene.": {
+      "metrics": null,
+      "answer_length": {
+        "avg": 0,
+        "min": 0,
+        "max": 0,
+        "median": 0,
+        "count": 0
+      }
+    }
+  },
+  "unknown_templates": null
+}

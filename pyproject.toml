@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "vqa-ad-ctu"
+version = "0.1.0"
+description = "Visual Question Answering for Autonomous Driving"
+authors = [{ name = "Dmytro Khursenko", email = "dmytro.khursenko@gmail.com" }]
+requires-python = ">=3.10"

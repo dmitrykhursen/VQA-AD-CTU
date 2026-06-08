@@ -1,0 +1,17 @@
+{
+  "global_metrics": {
+    "step": 4037,
+    "eval_drivelm_final_score": 0.7752191165995805,
+    "eval_accuracy": 0.8533604887983707,
+    "eval_chatgpt": 72.53578528827038,
+    "eval_match": 79.32887228352254,
+    "eval_pure_coordinate_match": 0.7575020198796965,
+    "eval_lang_score": 0.7787306655988988,
+    "eval_lang_val/Bleu_1": 0.9076582342381257,
+    "eval_lang_val/Bleu_2": 0.8785096273385998,
+    "eval_lang_val/Bleu_3": 0.8489432018615587,
+    "eval_lang_val/Bleu_4": 0.8191126610894018,
+    "eval_lang_val/ROUGE_L": 0.8909777425696448,
+    "eval_lang_val/CIDEr": 5.8165832309512995
+  }
+}

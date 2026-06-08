@@ -1,0 +1,45 @@
+# InternVL2-2B LoRA fine-tuning configuration
+# Hyperparameters as reported in the thesis (Section 6.x)
+# Actual CLI args are in scripts/04_finetune.sh
+
+model:
+  name: OpenGVLab/InternVL2-2B
+  conv_style: internlm2-chat
+
+lora:
+  rank: 16
+  alpha: 32          # set by InternVL internals as 2 × rank
+  dropout: 0.05
+  target_modules: all_linear   # all linear layers in the LLM
+
+training:
+  freeze_backbone: true
+  freeze_mlp: true
+  freeze_llm: true   # only LoRA adapters are trainable
+
+  learning_rate: 4.0e-5
+  lr_scheduler: cosine
+  warmup_ratio: 0.03
+  optimizer: AdamW
+  weight_decay: 0.01
+
+  num_epochs: 10
+  per_device_batch_size: 4
+  gradient_accumulation_steps: 2
+  effective_batch_size: 64      # 8 GPUs × 4 × 2
+
+  max_seq_length: 8192
+  precision: bfloat16
+  grad_checkpoint: true
+
+data:
+  image_size: 448
+  max_dynamic_patch: 12         # stitched 3×2 → 12 tiles + 1 thumbnail
+  use_thumbnail: true
+  down_sample_ratio: 0.5
+  loss_reduction: token
+
+hardware:
+  gpus: 8
+  gpu_type: NVIDIA A100 40GB
+  cluster: Karolina (IT4Innovations)
