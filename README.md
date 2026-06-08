@@ -4,6 +4,10 @@
 > — Dmytro Khursenko, Czech Technical University in Prague, Faculty of Electrical Engineering, 2026.
 > Supervised by Ing. David Hurych, Ph.D. (Valeo) and doc. Georgios Tolias, Ph.D. (CTU FEE).
 
+[![GitHub](https://img.shields.io/badge/GitHub-VQA--AD--CTU-181717?style=flat-square&logo=github)](https://github.com/dmitrykhursen/VQA-AD-CTU) [![Demo](https://img.shields.io/badge/Demo-Live-0969da?style=flat-square&logo=githubpages)](https://dmitrykhursen.github.io/VQA-AD-CTU/) [![HF Models](https://img.shields.io/badge/%F0%9F%A4%97%20Models-dkhursen-ffd21e?style=flat-square)](https://huggingface.co/dkhursen) [![HF Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-drivelm--pseudo--labels-ffd21e?style=flat-square)](https://huggingface.co/datasets/dkhursen/drivelm-pseudo-labels) [![Thesis](https://img.shields.io/badge/Thesis-CTU%20FEE%202026-lightgrey?style=flat-square&logo=bookstack)](https://github.com/dmitrykhursen/VQA-AD-CTU)
+
+> 📄 Thesis PDF will be published following successful defense (CTU FEE, 2026; expected by end of June 2026) — the badge above will be updated with a direct link at that point.
+
 ---
 
 ![Hero — stitched 6-camera view with white truck, sedans and red light ahead](assets/hero_scene.jpg)
@@ -41,7 +45,7 @@ Each scene shows the stitched 6-camera view and all QA pairs with ground-truth v
   - [Environment](#1-environment)
   - [Data](#2-data)
 - [Running the Pipeline](#running-the-pipeline)
-  - [Stage 0 — Activation](#stage-0--environment-activation)
+  - [Stage 0 — Environment activation](#stage-0--environment-activation)
   - [Stage 1 — Custom split](#stage-1--build-custom-data-split)
   - [Stage 2 — Metadata extraction](#stage-2--nuscenes-metadata-extraction)
   - [Stage 3 — Pseudo-label generation](#stage-3--pseudo-label-generation)
@@ -53,6 +57,7 @@ Each scene shows the stitched 6-camera view and all QA pairs with ground-truth v
 - [Method](#method)
 - [Models](#models)
 - [Datasets](#datasets)
+- [Limitations](#limitations)
 - [Citation](#citation)
 
 ---
@@ -491,9 +496,11 @@ Evaluated on a custom i.i.d. re-split of DriveLM-nuScenes.
 | LoRA-25k | Red Circle + CTags | 0.624 | 0.727 | 0.728 | 0.695 | 0.430 | 0.141 |
 | LoRA-25k | Red Circle | 0.646 | 0.793 | 0.729 | 0.761 | 0.443 | 0.158 |
 
-\* **Coord** is not included in the DriveLM Final score. **Match = (ChatGPT + Coord) / 2** — near-zero Coord across all online models (no visual annotation) confirms that visual object grounding — localising objects by bounding-box coordinates — is the dominant bottleneck for current VLMs on this benchmark.
+\* **Coord** is not included in the DriveLM Final Score. **Final Score = 0.4 × (GPT/100) + 0.2 × Language + 0.2 × (Match/100) + 0.2 × Accuracy**. **Match = (F1_coord × 100 + GPT_match) / 2** — blends spatial coordinate F1 with a GPT-3.5-turbo judge on prediction answers; near-zero Coord across all online models confirms that visual object grounding is the dominant bottleneck for current VLMs on this benchmark.
 
 > Full results including all annotation variants and per-metric breakdown (BLEU-1–4, ROUGE-L, CIDEr): [evaluation/README.md](evaluation/README.md) or run `python evaluation/print_results.py`.
+
+> **Note on evaluation scope.** All scores in this table are measured on the **custom i.i.d. local test split** (3,340 QA pairs) using the local DriveLM evaluation script. The official DriveLM evaluation server was not used as the primary reporting source: it returns only aggregate scores without per-metric breakdown, the infrastructure was intermittently unreliable (parsing errors in model output could not be diagnosed or corrected directly — only via GitHub issues), and the ChatGPT/Match metrics depend on OpenAI API calls that fail mid-run when the API quota for the billing period is exhausted.
 
 ### Oracle — Offline Visual Grounding
 
@@ -538,20 +545,28 @@ Hosted on HuggingFace: **[huggingface.co/dkhursen](https://huggingface.co/dkhurs
 
 | Model | HuggingFace |
 |---|---|
-| InternVL2-2B-LoRA-25k (our custom i.i.d. split) | `dkhursen/InternVL2-2b-LoRA-25k-drivelm` |
-| **InternVL2-2B-LoRA-25k + 10% DL-PL (best)** | `dkhursen/InternVL2-2b-LoRA-25k_plus_DL-PL-10pct` |
-| InternVL2-2B-LoRA-300k (official split) | `dkhursen/InternVL2-2b-LoRA-300k-drivelm` |
-| InternVL2-2B-LoRA-25k + Oracle visual annotation | `dkhursen/InternVL2-2b-LoRA-25k-drivelm-offline-redcircle-ctag-bkgd` |
+| InternVL2-2B-LoRA-25k (our custom i.i.d. split) | [dkhursen/InternVL2-2b-LoRA-25k-drivelm](https://huggingface.co/dkhursen/InternVL2-2b-LoRA-25k-drivelm) |
+| **InternVL2-2B-LoRA-25k + 10% DL-PL (best)** | [dkhursen/InternVL2-2b-LoRA-25k_plus_DL-PL-10pct](https://huggingface.co/dkhursen/InternVL2-2b-LoRA-25k_plus_DL-PL-10pct) |
+| InternVL2-2B-LoRA-300k (official split) | [dkhursen/InternVL2-2b-LoRA-300k-drivelm](https://huggingface.co/dkhursen/InternVL2-2b-LoRA-300k-drivelm) |
+| InternVL2-2B-LoRA-25k + Oracle visual annotation | [dkhursen/InternVL2-2b-LoRA-25k-drivelm-offline-redcircle-ctag-bkgd](https://huggingface.co/dkhursen/InternVL2-2b-LoRA-25k-drivelm-offline-redcircle-ctag-bkgd) |
 
 ---
 
 ## Datasets
 
-- **DriveLM-nuScenes**: [github.com/OpenDriveLab/DriveLM](https://github.com/OpenDriveLab/DriveLM)
+- **DriveLM-nuScenes**: [github.com/OpenDriveLab/DriveLM](https://github.com/OpenDriveLab/DriveLM) — detailed dataset statistics, QA-template distribution analysis, and the non-i.i.d. split problem are described in the thesis (see link above)
 - **nuScenes**: [nuscenes.org](https://www.nuscenes.org/)
 - **DriveLM Pseudo Labels** (ours): [huggingface.co/datasets/dkhursen/drivelm-pseudo-labels](https://huggingface.co/datasets/dkhursen/drivelm-pseudo-labels)
 - **Valeo dataset**: proprietary — not publicly available yet.
 
+
+---
+
+## Limitations
+
+- **No quality filtering on pseudo-labels.** Every generated QA pair is used at face value regardless of internal consistency or factual grounding. Filtering strategies such as self-consistency checks or rule-based checklists are known to be effective; without them the usable augmentation ratio is artificially capped — as the degrading performance at 30–100% mixing confirms.
+- **Camera distribution bias at high augmentation ratios.** The pseudo-label generation templates have an ego-centric forward bias, disproportionately referencing objects in the forward field of view. This contributes to the performance drop at higher mixing ratios; a camera-reweighted or upsampled variant was not tested.
+- **Pretrained baselines only — no fine-tuning on LLaVA-1.6 or LLaMA-Adapter-v2.** These models appear only as zero-shot baselines. InternVL2-2B was selected as the fine-tuning architecture based on its stronger pretrained performance on DriveLM-nuScenes and its native multi-image input support, which aligns naturally with the 6-camera setup.
 
 ---
 
